@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from config import device, print_freq, sos_id, eos_id, n_src_vocab, n_tgt_vocab, grad_clip, logger
+from config import device, print_freq, sos_id, eos_id, n_src_vocab, grad_clip, logger
 from data_gen import AiChallenger2017Dataset, pad_collate
 from transformer.decoder import Decoder
 from transformer.encoder import Encoder
@@ -13,7 +13,7 @@ from transformer.loss import cal_performance
 from transformer.optimizer import TransformerOptimizer
 from transformer.transformer import Transformer
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient
-
+import pickle
 
 # from torch import nn
 
@@ -26,14 +26,17 @@ def train_net(args):
     best_loss = float('inf')
     writer = SummaryWriter()
     epochs_since_improvement = 0
-
+    # with open('word_emb.p', "r") as fh:
+    word_mat = pickle.load(open('word_emb.p', "rb"))
     # Initialize / load checkpoint
+    word_mat = np.asarray(word_mat)
+    print(type(word_mat))
     if checkpoint is None:
         # model
-        encoder = Encoder(n_src_vocab, args.n_layers_enc, args.n_head,
+        encoder = Encoder(word_mat,n_src_vocab, args.n_layers_enc, args.n_head,
                           args.d_k, args.d_v, args.d_model, args.d_inner,
                           dropout=args.dropout, pe_maxlen=args.pe_maxlen)
-        decoder = Decoder(sos_id, eos_id, n_tgt_vocab,
+        decoder = Decoder(word_mat,sos_id, eos_id, n_src_vocab,
                           args.d_word_vec, args.n_layers_dec, args.n_head,
                           args.d_k, args.d_v, args.d_model, args.d_inner,
                           dropout=args.dropout,
@@ -112,8 +115,8 @@ def train(train_loader, model, optimizer, epoch, logger, writer):
     for i, (data) in enumerate(train_loader):
         # Move to GPU, if available
         padded_input, padded_target, input_lengths = data
-        padded_input = padded_input.to(device)
-        padded_target = padded_target.to(device)
+        padded_input = padded_input.long().to(device)
+        padded_target = padded_target.long().to(device)
         input_lengths = input_lengths.to(device)
 
         # Forward prop.

@@ -10,7 +10,8 @@ from config import device, logger, data_file, vocab_file
 from transformer.transformer import Transformer
 
 if __name__ == '__main__':
-    filename = 'transformer.pt'
+    # filename = 'transformer.pt'
+    filename = 'BEST'
     print('loading {}...'.format(filename))
     start = time.time()
     model = Transformer()
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     print('elapsed {} sec'.format(time.time() - start))
     model = model.to(device)
     model.eval()
-
+    assert (1==0)
     logger.info('loading samples...')
     start = time.time()
     with open(data_file, 'rb') as file:

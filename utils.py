@@ -87,7 +87,7 @@ def parse_args():
                         help='Dimension of key')
     parser.add_argument('--d_v', default=64, type=int,
                         help='Dimension of value')
-    parser.add_argument('--d_model', default=512, type=int,
+    parser.add_argument('--d_model', default=300, type=int,
                         help='Dimension of model')
     parser.add_argument('--d_inner', default=2048, type=int,
                         help='Dimension of inner')
@@ -96,7 +96,7 @@ def parse_args():
     parser.add_argument('--pe_maxlen', default=5000, type=int,
                         help='Positional Encoding max len')
     # decoder
-    parser.add_argument('--d_word_vec', default=512, type=int,
+    parser.add_argument('--d_word_vec', default=300, type=int,
                         help='Dim of decoder embedding')
     parser.add_argument('--n_layers_dec', default=6, type=int,
                         help='Number of decoder stacks')
@@ -112,13 +112,13 @@ def parse_args():
     # minibatch
     parser.add_argument('--shuffle', default=1, type=int,
                         help='reshuffle the data at every epoch')
-    parser.add_argument('--batch-size', default=128, type=int,
+    parser.add_argument('--batch-size', default=2, type=int,
                         help='Batch size')
     parser.add_argument('--batch_frames', default=0, type=int,
                         help='Batch frames. If this is not 0, batch size will make no sense')
-    parser.add_argument('--maxlen-in', default=50, type=int, metavar='ML',
+    parser.add_argument('--maxlen-in', default=1000, type=int, metavar='ML',
                         help='Batch size is reduced if the input sequence length > ML')
-    parser.add_argument('--maxlen-out', default=25, type=int, metavar='ML',
+    parser.add_argument('--maxlen-out', default=80, type=int, metavar='ML',
                         help='Batch size is reduced if the output sequence length > ML')
     parser.add_argument('--num-workers', default=8, type=int,
                         help='Number of workers to generate minibatch')

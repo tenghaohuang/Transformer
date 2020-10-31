@@ -4,13 +4,13 @@ from config import pad_id, n_src_vocab
 from .attention import MultiHeadAttention
 from .module import PositionalEncoding, PositionwiseFeedForward
 from .utils import get_non_pad_mask, get_attn_pad_mask
-
+import torch
 
 class Encoder(nn.Module):
     """Encoder of Transformer including self-attention and feed forward.
     """
 
-    def __init__(self, n_src_vocab=n_src_vocab, n_layers=6, n_head=8, d_k=64, d_v=64,
+    def __init__(self, word_mat,n_src_vocab=n_src_vocab, n_layers=6, n_head=8, d_k=64, d_v=64,
                  d_model=512, d_inner=2048, dropout=0.1, pe_maxlen=5000):
         super(Encoder, self).__init__()
         # parameters
@@ -24,7 +24,9 @@ class Encoder(nn.Module):
         self.dropout_rate = dropout
         self.pe_maxlen = pe_maxlen
 
-        self.src_emb = nn.Embedding(n_src_vocab, d_model, padding_idx=pad_id)
+        # self.src_emb = nn.Embedding(n_src_vocab, d_model, padding_idx=pad_id)
+        self.src_emb = nn.Embedding(len(word_mat), len(word_mat[0]), padding_idx=0)
+        self.src_emb.weight.data.copy_(torch.from_numpy(word_mat))
         self.pos_emb = PositionalEncoding(d_model, max_len=pe_maxlen)
         self.dropout = nn.Dropout(dropout)
 

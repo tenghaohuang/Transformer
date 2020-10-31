@@ -12,7 +12,7 @@ class Decoder(nn.Module):
     ''' A decoder model with self attention mechanism. '''
 
     def __init__(
-            self, sos_id=sos_id, eos_id=eos_id,
+            self, word_mat,sos_id=sos_id, eos_id=eos_id,
             n_tgt_vocab=n_tgt_vocab, d_word_vec=512,
             n_layers=6, n_head=8, d_k=64, d_v=64,
             d_model=512, d_inner=2048, dropout=0.1,
@@ -34,7 +34,9 @@ class Decoder(nn.Module):
         self.tgt_emb_prj_weight_sharing = tgt_emb_prj_weight_sharing
         self.pe_maxlen = pe_maxlen
 
-        self.tgt_word_emb = nn.Embedding(n_tgt_vocab, d_word_vec)
+        # self.tgt_word_emb = nn.Embedding(n_tgt_vocab, d_word_vec)
+        self.tgt_word_emb = nn.Embedding(len(word_mat), len(word_mat[0]), padding_idx=0)
+        self.tgt_word_emb.weight.data.copy_(torch.from_numpy(word_mat))
         self.positional_encoding = PositionalEncoding(d_model, max_len=pe_maxlen)
         self.dropout = nn.Dropout(dropout)
 
